@@ -139,90 +139,46 @@ public class Skyline {
 			Solution s1 = i < solutionList1.size() ? solutionList1.get(i) : new Solution(Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE);
 			Solution s2 = j < solutionList2.size() ? solutionList2.get(j) : new Solution(Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE);
 			
+			Solution s;
+			
 			if(s1.getOrdinate() == s2.getOrdinate()) {
-				Solution s = s1.getHeight() > s2.getHeight() ? s1 : s2;
+				s = s1.getHeight() > s2.getHeight() ? s1 : s2;
+			}else if(s1.getOrdinate() < s2.getOrdinate()) {
+				s = s1;
+			}else {
+				s = s2;
+			}
 				
-				if(s.getOrdinate() < maxEndLine && s.getHeight() < maxHeight && s.getHeight() != 0) {
-					// do not add this point to solution
-				} else {
-					
-					if(s.getHeight() == 0 && s.getOrdinate() < maxEndLine) {
-						s.setHeight(currentmaxEndLineHeight);
-						s.setEndLine(maxEndLine);
-					}
-					
-					if(s.getHeight() == previousSetSolution.getHeight()) {
-						// do not add point
-					} else {
-						solution.add(s);
-						previousSetSolution = s;
-						maxHeight = s.getHeight();
-					}
+			if(s.getOrdinate() < maxEndLine && s.getHeight() < maxHeight && s.getHeight() != 0) {
+				// do not add this point to solution
+			} else {
+				
+				if(s.getHeight() == 0 && s.getOrdinate() < maxEndLine) {
+					s.setHeight(currentmaxEndLineHeight);
+					s.setEndLine(maxEndLine);
 				}
 				
+				if(s.getHeight() == previousSetSolution.getHeight()) {
+					// do not add point
+				} else {
+					solution.add(s);
+					previousSetSolution = s;
+					maxHeight = s.getHeight();
+				}
+			}
+			
+			if(s.getEndLine() > maxEndLine) {
+				maxEndLine = s.getEndLine();
+				currentmaxEndLineHeight = s.getHeight();
+			}
+			
+			if(s1.getOrdinate() == s2.getOrdinate()) {
 				if (s1.getHeight() > s2.getHeight()) i++;
 				else j++;
-				
-				if(s.getEndLine() > maxEndLine) {
-					maxEndLine = s.getEndLine();
-					currentmaxEndLineHeight = s.getHeight();
-				}
-				
-			} else if(s1.getOrdinate() < s2.getOrdinate()) {
-				
-				if(s1.getOrdinate() < maxEndLine && s1.getHeight() < maxHeight && s1.getHeight() != 0) {
-					// do not add this point to solution
-					i++;
-				} else {
-					// add point
-					if(s1.getHeight() == 0 && s1.getOrdinate() < maxEndLine) {
-						s1.setHeight(currentmaxEndLineHeight);
-						s1.setEndLine(maxEndLine);
-					}
-					
-					if(s1.getHeight() == previousSetSolution.getHeight()) {
-						// do not add point
-						i++;
-					} else {
-						solution.add(s1);
-						previousSetSolution = s1;
-						maxHeight = s1.getHeight();
-						i++;
-					}
-				}
-				
-				if(s1.getEndLine() > maxEndLine) {
-					maxEndLine = s1.getEndLine();
-					currentmaxEndLineHeight = s1.getHeight();
-				}
-				
-			} else {
-				if(s2.getOrdinate() < maxEndLine && s2.getHeight() < maxHeight && s2.getHeight() != 0) {
-					// do not add this point to solution
-					j++;
-				} else {
-					// add point
-					if(s2.getHeight() == 0 && s2.getOrdinate() < maxEndLine) {
-						s2.setHeight(currentmaxEndLineHeight);
-						s2.setEndLine(maxEndLine);
-					}
-					
-					if(s2.getHeight() == previousSetSolution.getHeight()) {
-						// do not add point
-						j++;
-					} else {
-					
-						solution.add(s2);
-						previousSetSolution = s2;
-						maxHeight = s2.getHeight();
-						j++;
-					}
-				}
-				
-				if(s2.getEndLine() > maxEndLine) {
-					maxEndLine = s2.getEndLine();
-					currentmaxEndLineHeight = s2.getHeight();
-				}
+			}else if(s1.getOrdinate() < s2.getOrdinate()) {
+				i++;
+			}else {
+				j++;
 			}
 		}
 		
