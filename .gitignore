@@ -1,11 +1,1 @@
-
-*.prefs
-.classpath
-.project
-bin/baena/skyline/Building.class
-bin/baena/skyline/Constants.class
-bin/baena/skyline/Main.class
-bin/baena/skyline/Problem.class
-bin/baena/skyline/Skyline.class
-bin/baena/skyline/Solution.class
-bin/data.d
+/bin/

@@ -2,7 +2,9 @@ package baena.skyline;
 
 public class Building {
 	
-	int x1, x2, h;
+	private int x1;
+	private int x2;
+	private int h;
 	
 	public Building(int x1, int x2, int h) {
 		this.x1 = x1;

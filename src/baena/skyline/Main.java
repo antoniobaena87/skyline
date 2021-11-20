@@ -1,6 +1,7 @@
 package baena.skyline;
 
 import java.io.IOException;
+import java.util.List;
 
 public class Main {
 	
@@ -19,8 +20,10 @@ public class Main {
 		}
 		
 		skyline = new Skyline(showTrace, showHelp, "data.d");
+		List<Solution> solution;
 		try {
-			Solution solution = skyline.beginExecution();
+			solution = skyline.beginExecution();
+			solution.forEach(System.out::println);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

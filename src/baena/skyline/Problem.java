@@ -6,10 +6,11 @@ import java.util.List;
 public class Problem {
 	
 	List<Building> buildingList;
-	Solution solution;
+	List<Solution> solutionList;
 	
 	public Problem() {
 		buildingList = new ArrayList<>();
+		solutionList = new ArrayList<>();
 	}
 	
 	public void removeBuilding(Building building) {
@@ -31,5 +32,13 @@ public class Problem {
 	
 	public Building getBuildingAt(int index) {
 		return buildingList.get(index);
+	}
+	
+	public List<Solution> getSolution(){
+		return solutionList;
+	}
+	
+	public void addSolution(Solution solution) {
+		this.solutionList.add(solution);
 	}
 }
