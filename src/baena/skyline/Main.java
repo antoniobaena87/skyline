@@ -9,7 +9,7 @@ public class Main {
 		
 		boolean showTrace = false;
 		boolean showHelp = false; 
-		Skyline skyline;
+		Implementation implementation;
 		
 		for(String arg:args) {
 			if(arg.equals(Constants.TRACE_PARAM)) {
@@ -19,11 +19,11 @@ public class Main {
 			}
 		}
 		
-		skyline = new Skyline(showTrace, showHelp, "data.d");
-		List<Solution> solution;
+		implementation = new Implementation(showTrace, showHelp, "data.d");
+		Skyline skyline;
 		try {
-			solution = skyline.beginExecution();
-			solution.forEach(System.out::println);
+			skyline = implementation.beginExecution();
+			System.out.println(skyline.getData().toString());
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
