@@ -20,10 +20,10 @@ public class Main {
 		}
 		
 		implementation = new Implementation(showTrace, showHelp, "data.d");
-		Skyline skyline;
+		List<Point> skyline;
 		try {
 			skyline = implementation.beginExecution();
-			System.out.println(skyline.getData().toString());
+			System.out.println(skyline);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

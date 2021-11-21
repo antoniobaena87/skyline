@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class Implementation {
@@ -20,7 +21,7 @@ public class Implementation {
 		this.entryDataPath = entryDataPath;
 	}
 	
-	public Skyline beginExecution() throws IOException {
+	public List<Point> beginExecution() throws IOException {
 		
 		if(showHelp) printHelp();
 		
@@ -28,7 +29,7 @@ public class Implementation {
 		
 		// TODO: Sort buildings in problem by ascending ordinates
 		
-		return buildings(vectorBuildings, 0, vectorBuildings.length - 1);
+		return buildings(vectorBuildings);
 	}
 	
 	/**
@@ -71,15 +72,24 @@ public class Implementation {
 	 * @param problem
 	 * @return
 	 */
-	private Skyline buildings(Building[] buildingVector, int i, int j) {
+	private List<Point> buildings(Building[] buildingVector) {
 		
-		if(i < j) {
-			int mid = i + (j - i) / 2;
-			return combine(buildings(buildingVector, i, mid), buildings(buildingVector, mid + 1, j));
+		int n = buildingVector.length;
 		
-		} else {
-			return convertBuildingIntoSkyline(buildingVector[i]);	
+		if(n == 1){
+			
+			List<Point> sl = new ArrayList<>();
+			
+			sl.add(new Point(buildingVector[0].getX1(), buildingVector[0].getH()));
+			sl.add(new Point(buildingVector[0].getX2(), 0));
+			
+			return sl;
 		}
+		
+		List<Point> sl1 = buildings(Arrays.copyOfRange(buildingVector, 0, n/2));
+		List<Point> sl2 = buildings(Arrays.copyOfRange(buildingVector, (n/2), n));
+		
+		return combine(sl1, sl2);
 	}
 	
 	// This is the trivial solution
@@ -98,54 +108,52 @@ public class Implementation {
 		return skyline;
 	}
 	
-	private Skyline combine(Skyline s1, Skyline s2) {
-		
-		int n = s1.getSize() / 2;
-		int m = s2.getSize() / 2;
-		int i = 0;
-		int j = 0;
-		int k = 0;
-		
-		int[] data1 = s1.getData();
-		int[] data2 = s2.getData();
-		
-		int h1 = 0;
-		int h2 = 0;
-		
-		Skyline s = new Skyline(n*2);
-		
-		while(i < n && j < m) {
-			int x = 0;
-			int h = 0;
-			
-			if(data1[i] < data2[j]) {
-				x = data1[i];
-				h1 = data1[i+1];
-				h = Math.max(h1, h2);
-				i += 2;
-				
-			} else if(data1[i] > data2[j]) {
-				x = data2[j];
-				h2 = data2[j+1];
-				h = Math.max(h1,  h2);
-				j += 2;
-				
-			} else {
-				x = data1[i];
-				h1 = data1[i+1];
-				h2 = data2[j+1];
-				h = Math.max(h1, h2);
-				i += 2;
-				j += 2;
+	private List<Point> combine(List<Point> sl1, List<Point> sl2) {
+
+		List<Point> skyline = new ArrayList<Point>();
+		int curH1=0, curH2=0, curX=0;
+
+		while(!sl1.isEmpty() && !sl2.isEmpty()){
+
+			if( sl1.get(0).getX() < sl2.get(0).getX() ){
+				curX = sl1.get(0).getX();
+				curH1 = sl1.get(0).getH();
+				sl1.remove(0);
+				skyline.add(new Point(curX, Math.max(curH1, curH2)));
+
+			}else{
+				curX = sl2.get(0).getX();
+				curH2 = sl2.get(0).getH();
+				sl2.remove(0);
+				skyline.add(new Point(curX, Math.max(curH1, curH2)));
 			}
-			
-			if(s.getData().length == 0 || h != s.getData()[s.getData().length - 1]) {
-				k = s.addData(x, h, k);
-				
-			}
+
+		}
+		if(sl1.isEmpty()){
+			skyline.addAll(sl2);
+		}else if(sl2.isEmpty()){
+			skyline.addAll(sl1);
 		}
 		
-		return s;
+		removeRedundant(skyline);
+
+		return skyline;
+	}
+	
+	private static void removeRedundant(List<Point> points) {
+		for (int i = points.size() - 1; i > 0; i--) {
+			Point rightPoint = points.get(i);
+			Point leftPoint = points.get(i - 1);
+
+			boolean heightEquality = rightPoint.getH() == leftPoint.getH();
+			boolean leftEquality = rightPoint.getX() == leftPoint.getX();
+
+			if (leftEquality && !heightEquality)
+				leftPoint.setH(Math.max(rightPoint.getH(), leftPoint.getH()));
+
+			if (leftEquality || heightEquality)
+				points.remove(i);
+		}
 	}
 	
 	private void printTrace(String message) {
