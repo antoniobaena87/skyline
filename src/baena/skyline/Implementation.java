@@ -73,18 +73,12 @@ public class Implementation {
 	 */
 	private Skyline buildings(Building[] buildingVector, int i, int j) {
 		
-		int m = (i + j-1)/2;
-		int n = j-i+1;
+		if(i < j) {
+			int mid = i + (j - i) / 2;
+			return combine(buildings(buildingVector, i, mid), buildings(buildingVector, mid + 1, j));
 		
-		Skyline s1;
-		Skyline s2;
-		
-		if(n == 1) {
-			return convertBuildingIntoSkyline(buildingVector[i]);	// trivial solution
 		} else {
-			s1 = buildings(buildingVector, i, m);
-			s2 = buildings(buildingVector, m+1, j);
-			return combine(s1, s2);
+			return convertBuildingIntoSkyline(buildingVector[i]);	
 		}
 	}
 	
@@ -106,33 +100,49 @@ public class Implementation {
 	
 	private Skyline combine(Skyline s1, Skyline s2) {
 		
-		int n = s1.getSize();	// size or size / 2 ??
-		int m = s2.getSize();
-		int i = 1;
-		int j = 1;
-		int k = 1;
-		int[] s1x = s1.getAbcissas();
-		int[] s2x = s2.getAbcissas();
-		int[] s1h = s1.getHeights();
-		int[] s2h = s2.getHeights();
-		Skyline s = new Skyline(n);
+		int n = s1.getSize() / 2;
+		int m = s2.getSize() / 2;
+		int i = 0;
+		int j = 0;
+		int k = 0;
 		
-		while(i <= n || j <= m) {
+		int[] data1 = s1.getData();
+		int[] data2 = s2.getData();
+		
+		int h1 = 0;
+		int h2 = 0;
+		
+		Skyline s = new Skyline(n*2);
+		
+		while(i < n && j < m) {
+			int x = 0;
+			int h = 0;
 			
-			int x = Math.min(s1x[i], s2x[j]);
-			int max;
-			
-			if(s1x[i] < s2x[j]) {
-				max = Math.max(s1h[i], s2h[j-1]);
-				j++;
+			if(data1[i] < data2[j]) {
+				x = data1[i];
+				h1 = data1[i+1];
+				h = Math.max(h1, h2);
+				i += 2;
+				
+			} else if(data1[i] > data2[j]) {
+				x = data2[j];
+				h2 = data2[j+1];
+				h = Math.max(h1,  h2);
+				j += 2;
+				
 			} else {
-				max = Math.max(s1h[i], s2h[j]);
-				i++;
-				j++;
+				x = data1[i];
+				h1 = data1[i+1];
+				h2 = data2[j+1];
+				h = Math.max(h1, h2);
+				i += 2;
+				j += 2;
 			}
 			
-			s.addData(x, max, k);
-			k++;
+			if(s.getData().length == 0 || h != s.getData()[s.getData().length - 1]) {
+				k = s.addData(x, h, k);
+				
+			}
 		}
 		
 		return s;

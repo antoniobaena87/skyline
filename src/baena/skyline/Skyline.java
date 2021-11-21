@@ -43,8 +43,10 @@ public class Skyline {
 		return heights;
 	}
 	
-	public void addData(int x, int height, int index) {
+	public int addData(int x, int height, int index) {
 		data[index] = x;
 		data[index + 1] = height;
+		
+		return index + 2;
 	}
 }
