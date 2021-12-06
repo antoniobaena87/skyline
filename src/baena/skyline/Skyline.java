@@ -1,8 +1,5 @@
 package baena.skyline;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class Skyline {
 	
 	private int[] data;

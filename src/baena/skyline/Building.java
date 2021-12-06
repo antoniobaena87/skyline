@@ -20,7 +20,7 @@ public class Building {
 		return x2;
 	}
 
-	public int getH() {
+	public int getHeight() {
 		return h;
 	}
 }

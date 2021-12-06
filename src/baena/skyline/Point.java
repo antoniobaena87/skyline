@@ -14,11 +14,11 @@ public class Point {
 		return x;
 	}
 	
-	public int getH() {
+	public int getHeight() {
 		return h;
 	}
 	
-	public void setH(int h) {
+	public void setHeight(int h) {
 		this.h = h;
 	}
 }

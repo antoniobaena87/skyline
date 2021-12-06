@@ -78,12 +78,7 @@ public class Implementation {
 		
 		if(n == 1){
 			
-			List<Point> sl = new ArrayList<>();
-			
-			sl.add(new Point(buildingVector[0].getX1(), buildingVector[0].getH()));
-			sl.add(new Point(buildingVector[0].getX2(), 0));
-			
-			return sl;
+			return processTrivialCase(buildingVector[0]);
 		}
 		
 		List<Point> sl1 = buildings(Arrays.copyOfRange(buildingVector, 0, n/2));
@@ -93,37 +88,34 @@ public class Implementation {
 	}
 	
 	// This is the trivial solution
-	private Skyline convertBuildingIntoSkyline(Building building) {
+	private List<Point> processTrivialCase(Building building) {
 		
-		int x1 = building.getX1();
-		int x2 = building.getX2();
-		int h = building.getH();
-		Skyline skyline = new Skyline(4);
-		int i = 0;
+		List<Point> points = new ArrayList<>();
 		
-		skyline.addData(x1, h, i);
-		i += 2;
-		skyline.addData(x2, 0, i);
+		points.add(new Point(building.getX1(), building.getHeight()));
+		points.add(new Point(building.getX2(), 0));
 		
-		return skyline;
+		return points;
 	}
 	
 	private List<Point> combine(List<Point> sl1, List<Point> sl2) {
 
-		List<Point> skyline = new ArrayList<Point>();
-		int curH1=0, curH2=0, curX=0;
+		List<Point> skyline = new ArrayList<>();
+		int curH1=0;
+		int curH2=0;
+		int curX=0;
 
 		while(!sl1.isEmpty() && !sl2.isEmpty()){
 
-			if( sl1.get(0).getX() < sl2.get(0).getX() ){
+			if(sl1.get(0).getX() < sl2.get(0).getX()){
 				curX = sl1.get(0).getX();
-				curH1 = sl1.get(0).getH();
+				curH1 = sl1.get(0).getHeight();
 				sl1.remove(0);
 				skyline.add(new Point(curX, Math.max(curH1, curH2)));
 
 			}else{
 				curX = sl2.get(0).getX();
-				curH2 = sl2.get(0).getH();
+				curH2 = sl2.get(0).getHeight();
 				sl2.remove(0);
 				skyline.add(new Point(curX, Math.max(curH1, curH2)));
 			}
@@ -145,11 +137,11 @@ public class Implementation {
 			Point rightPoint = points.get(i);
 			Point leftPoint = points.get(i - 1);
 
-			boolean heightEquality = rightPoint.getH() == leftPoint.getH();
+			boolean heightEquality = rightPoint.getHeight() == leftPoint.getHeight();
 			boolean leftEquality = rightPoint.getX() == leftPoint.getX();
 
 			if (leftEquality && !heightEquality)
-				leftPoint.setH(Math.max(rightPoint.getH(), leftPoint.getH()));
+				leftPoint.setHeight(Math.max(rightPoint.getHeight(), leftPoint.getHeight()));
 
 			if (leftEquality || heightEquality)
 				points.remove(i);
