@@ -65,7 +65,6 @@ public class Implementation {
 		int n = buildingVector.length;
 		
 		if(n == 1){
-			
 			return processTrivialCase(buildingVector[0]);	// constant cost
 		}
 		
@@ -113,26 +112,25 @@ public class Implementation {
 		printTrace("\nSkyline 1: " + sl1.toString());
 		printTrace("\nSkyline 2: " + sl2.toString() + "\n");
 
-		while(!sl1.isEmpty() && !sl2.isEmpty()){	// number of iterations is n + m, being n the size of sl1 and m the size of sl2
+		while(!sl1.isEmpty() && !sl2.isEmpty()){	// number of iterations is Min(n,m), being n the size of sl1 and m the size of sl2
 
-			if(sl1.get(0).getX() < sl2.get(0).getX()){
+			if(sl1.get(0).getX() < sl2.get(0).getX()) {
 				curX = sl1.get(0).getX();
 				curH1 = sl1.get(0).getHeight();
 				sl1.remove(0);											// constant cost
 				skyline.add(new Point(curX, Math.max(curH1, curH2)));	// constant cost
 
-			}else{
+			} else {
 				curX = sl2.get(0).getX();
 				curH2 = sl2.get(0).getHeight();
 				sl2.remove(0);
 				skyline.add(new Point(curX, Math.max(curH1, curH2)));
 			}
-
 		}
 		
-		if(sl1.isEmpty()){
+		if(sl1.isEmpty()) {
 			skyline.addAll(sl2);
-		}else if(sl2.isEmpty()){
+		} else if(sl2.isEmpty()) {
 			skyline.addAll(sl1);
 		}
 		
@@ -145,6 +143,13 @@ public class Implementation {
 		return skyline;
 	}
 	
+	/**
+	 * Removes redundant points. These points are points that are along a vertical line of the skyline 
+	 * or points along a horizontal line of the skyline.
+	 * 
+	 * @param points
+	 * @return A ListPoint object containing the removed points.
+	 */
 	private static ListPoint removeRedundant(ListPoint points) {
 		
 		ListPoint removedPoints = new ListPoint();
@@ -153,13 +158,14 @@ public class Implementation {
 			Point rightPoint = points.get(i);
 			Point leftPoint = points.get(i - 1);
 
-			boolean heightEquality = (rightPoint.getHeight() == leftPoint.getHeight());
-			boolean leftEquality = (rightPoint.getX() == leftPoint.getX());
+			boolean horizontalEquality = (rightPoint.getHeight() == leftPoint.getHeight());
+			boolean verticalEquality = (rightPoint.getX() == leftPoint.getX());
 
-			if (leftEquality && !heightEquality)
+			if (verticalEquality && !horizontalEquality)
+				// Same ordinate, select highest height and set it for the left point so we can remove the one on the right
 				leftPoint.setHeight(Math.max(rightPoint.getHeight(), leftPoint.getHeight()));
 
-			if (leftEquality || heightEquality) {
+			if (verticalEquality || horizontalEquality) {
 				removedPoints.add(points.get(i));
 				points.remove(i);
 			}
