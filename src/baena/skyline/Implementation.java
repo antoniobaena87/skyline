@@ -31,7 +31,7 @@ public class Implementation {
 		
 		// TODO: Sort buildings in problem by ascending ordinates
 		
-		return buildings(vectorBuildings, 1);
+		return buildings(vectorBuildings, "1");
 	}
 	
 	public void saveData(ListPoint skyline, String saveDataPath) throws FileNotFoundException {
@@ -62,7 +62,7 @@ public class Implementation {
 	 * @param problem
 	 * @return
 	 */
-	private ListPoint buildings(Building[] buildingVector, int iterationNumber) {
+	private ListPoint buildings(Building[] buildingVector, String iterationNumber) {
 		
 		printTrace("Llamada número " + iterationNumber + " al método buildings.\n");	// constant cost
 		printTrace("Vector de edificios: " + Arrays.toString(buildingVector) + "\n");	// cost of Arrays.toString() is the size of the buildingVector
@@ -76,8 +76,8 @@ public class Implementation {
 		
 		printTrace("Dividiendo el vector de edificios en dos mitades...\n\n");
 		
-		ListPoint sl1 = buildings(Arrays.copyOfRange(buildingVector, 0, n/2), iterationNumber+1);
-		ListPoint sl2 = buildings(Arrays.copyOfRange(buildingVector, (n/2), n), iterationNumber+2);
+		ListPoint sl1 = buildings(Arrays.copyOfRange(buildingVector, 0, n/2), iterationNumber + "." + 1);
+		ListPoint sl2 = buildings(Arrays.copyOfRange(buildingVector, (n/2), n), iterationNumber + "." + 2);
 		
 		return combine(sl1, sl2, iterationNumber);	// cost is sl1.size + sl2.size, each one being N/2, being N the length of buildingVector
 	}
@@ -107,7 +107,7 @@ public class Implementation {
 	 * @param iterationNumber
 	 * @return
 	 */
-	private ListPoint combine(ListPoint sl1, ListPoint sl2, int iterationNumber) {
+	private ListPoint combine(ListPoint sl1, ListPoint sl2, String iterationNumber) {
 
 		ListPoint skyline = new ListPoint();
 		int curH1=0;
