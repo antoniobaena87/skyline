@@ -20,7 +20,12 @@ public class Building {
 		return x2;
 	}
 
-	public int getH() {
+	public int getHeight() {
 		return h;
+	}
+	
+	@Override
+	public String toString() {
+		return "[x1: " + x1 + ", x2: " + x2 + ", h: " + h + "]";
 	}
 }
