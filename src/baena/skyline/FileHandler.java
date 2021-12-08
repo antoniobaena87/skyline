@@ -22,7 +22,7 @@ public class FileHandler {
 		
 		List<Building> buildingList = new ArrayList<>();
 		
-		try (BufferedReader br = new BufferedReader(new FileReader("./src/Data/" + dataEntryPath))){
+		try (BufferedReader br = new BufferedReader(new FileReader(dataEntryPath))){
 			String line = br.readLine();
 			
 			while(line != null) {
@@ -42,7 +42,7 @@ public class FileHandler {
 		
 		String result = skyline.getInOutputDataFormat();
 		
-		try(PrintWriter out = new PrintWriter("./src/Output/" + saveDataPath)){
+		try(PrintWriter out = new PrintWriter(saveDataPath)){
 			out.print(result);
 		}catch(FileNotFoundException e) {
 			throw new FileNotFoundException("Error guardando datos en archivo de salida...");
