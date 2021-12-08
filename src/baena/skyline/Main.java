@@ -1,7 +1,7 @@
 package baena.skyline;
 
+import java.io.File;
 import java.io.IOException;
-import java.util.List;
 
 public class Main {
 	
@@ -21,7 +21,10 @@ public class Main {
 				showHelp = true;
 			}else {
 				if(entryDataPath == null) entryDataPath = arg;
-				else exitDataPath = arg;
+				else { 
+					exitDataPath = arg;
+					if(new File(exitDataPath).exists()) throw new IllegalArgumentException("Error: El fichero de salida ya existe.");
+				}
 			}
 		}
 		
