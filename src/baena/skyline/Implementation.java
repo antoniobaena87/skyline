@@ -14,46 +14,28 @@ public class Implementation {
 	private boolean showTrace;
 	private boolean showHelp;
 	private String entryDataPath;
+	private FileHandler fileHandler;
 	
 	public Implementation(boolean showTrace, boolean showHelp, String entryDataPath) {
 		this.showTrace = showTrace;
 		this.showHelp = showHelp;
 		this.entryDataPath = entryDataPath;
+		fileHandler = new FileHandler();
 	}
 	
-	public List<Point> beginExecution() throws IOException {
+	public ListPoint beginExecution() throws IOException {
 		
 		if(showHelp) printHelp();
 		
-		Building[] vectorBuildings = readData(entryDataPath);
+		Building[] vectorBuildings = fileHandler.readData(entryDataPath); // cost N
 		
 		// TODO: Sort buildings in problem by ascending ordinates
 		
-		return buildings(vectorBuildings);
+		return buildings(vectorBuildings, 1);
 	}
 	
-	/**
-	 * Reads the entry file and transforms it into the main problem.
-	 * @throws IOException 
-	 */
-	private Building[] readData(String entryDataFilePath) throws IOException {
-		
-		List<Building> buildingList = new ArrayList<>();
-		
-		try (BufferedReader br = new BufferedReader(new FileReader(getClass().getClassLoader().getResource(entryDataFilePath).getPath()))){
-			String line = br.readLine();
-			
-			while(line != null) {
-				String[] data = line.split(",");
-				Building newBuilding = new Building(Integer.valueOf(data[0]), Integer.valueOf(data[1]), Integer.valueOf(data[2]));
-				
-				buildingList.add(newBuilding);
-				
-				line = br.readLine();
-			}
-		}
-		
-		return buildingList.toArray(new Building[buildingList.size()]);
+	public void saveData(ListPoint skyline, String saveDataPath) throws FileNotFoundException {
+		fileHandler.saveData(skyline, saveDataPath);
 	}
 	
 	private void printHelp() {
@@ -69,49 +51,80 @@ public class Implementation {
 	/**
 	 * Method where the divide and conquer algorithm takes place.
 	 * 
+	 * Each recursive call to this method divides the problem by half, and calls it again twice. So our parameters to calculate the cost is:
+	 * 
+	 * a = 2
+	 * b = 2
+	 * k = 0
+	 * 
+	 * the iterative cost is T(n) = O(n * log n)
+	 * 
 	 * @param problem
 	 * @return
 	 */
-	private List<Point> buildings(Building[] buildingVector) {
+	private ListPoint buildings(Building[] buildingVector, int iterationNumber) {
+		
+		printTrace("Llamada número " + iterationNumber + " al método buildings.\n");	// constant cost
+		printTrace("Vector de edificios: " + Arrays.toString(buildingVector) + "\n");	// cost of Arrays.toString() is the size of the buildingVector
 		
 		int n = buildingVector.length;
 		
 		if(n == 1){
 			
-			return processTrivialCase(buildingVector[0]);
+			return processTrivialCase(buildingVector[0]);	// constant cost
 		}
 		
-		List<Point> sl1 = buildings(Arrays.copyOfRange(buildingVector, 0, n/2));
-		List<Point> sl2 = buildings(Arrays.copyOfRange(buildingVector, (n/2), n));
+		printTrace("Dividiendo el vector de edificios en dos mitades...\n\n");
 		
-		return combine(sl1, sl2);
+		ListPoint sl1 = buildings(Arrays.copyOfRange(buildingVector, 0, n/2), iterationNumber+1);
+		ListPoint sl2 = buildings(Arrays.copyOfRange(buildingVector, (n/2), n), iterationNumber+2);
+		
+		return combine(sl1, sl2, iterationNumber);	// cost is sl1.size + sl2.size, each one being N/2, being N the length of buildingVector
 	}
 	
-	// This is the trivial solution
-	private List<Point> processTrivialCase(Building building) {
+	// This is the trivial solution. The cost is constant
+	private ListPoint processTrivialCase(Building building) {
 		
-		List<Point> points = new ArrayList<>();
+		ListPoint points = new ListPoint();
 		
 		points.add(new Point(building.getX1(), building.getHeight()));
 		points.add(new Point(building.getX2(), 0));
 		
+		printTrace("Añadiendo solución trivial:\n"
+				+ "\tPunto " + building.getX1() + ", altura " + building.getHeight() + "\n"
+				+ "\tPunto " + building.getX2() + ", altura 0\n\n");
+		
 		return points;
 	}
 	
-	private List<Point> combine(List<Point> sl1, List<Point> sl2) {
+	/**
+	 * Combines two skylines into one that serves as solution.
+	 * 
+	 * Cost is 2 * (sl1.size + sl2.size) = O(n+m)
+	 * 
+	 * @param sl1
+	 * @param sl2
+	 * @param iterationNumber
+	 * @return
+	 */
+	private ListPoint combine(ListPoint sl1, ListPoint sl2, int iterationNumber) {
 
-		List<Point> skyline = new ArrayList<>();
+		ListPoint skyline = new ListPoint();
 		int curH1=0;
 		int curH2=0;
 		int curX=0;
+		
+		printTrace("Comenzando combinación de skylines para iteración " + iterationNumber + "...");
+		printTrace("\nSkyline 1: " + sl1.toString());
+		printTrace("\nSkyline 2: " + sl2.toString() + "\n");
 
-		while(!sl1.isEmpty() && !sl2.isEmpty()){
+		while(!sl1.isEmpty() && !sl2.isEmpty()){	// number of iterations is n + m, being n the size of sl1 and m the size of sl2
 
 			if(sl1.get(0).getX() < sl2.get(0).getX()){
 				curX = sl1.get(0).getX();
 				curH1 = sl1.get(0).getHeight();
-				sl1.remove(0);
-				skyline.add(new Point(curX, Math.max(curH1, curH2)));
+				sl1.remove(0);											// constant cost
+				skyline.add(new Point(curX, Math.max(curH1, curH2)));	// constant cost
 
 			}else{
 				curX = sl2.get(0).getX();
@@ -121,34 +134,46 @@ public class Implementation {
 			}
 
 		}
+		
 		if(sl1.isEmpty()){
 			skyline.addAll(sl2);
 		}else if(sl2.isEmpty()){
 			skyline.addAll(sl1);
 		}
 		
-		removeRedundant(skyline);
+		printTrace("Comenzando comprobación de puntos redundantes...");
+		ListPoint removedPoints = removeRedundant(skyline);				// cost is n + m, as in the while loop
+		printTrace(" Puntos eliminados: " + removedPoints + "\n");
+		
+		printTrace("Skyline resultado de la combinación: " + skyline.toString() + "\n\n");
 
 		return skyline;
 	}
 	
-	private static void removeRedundant(List<Point> points) {
+	private static ListPoint removeRedundant(ListPoint points) {
+		
+		ListPoint removedPoints = new ListPoint();
+		
 		for (int i = points.size() - 1; i > 0; i--) {
 			Point rightPoint = points.get(i);
 			Point leftPoint = points.get(i - 1);
 
-			boolean heightEquality = rightPoint.getHeight() == leftPoint.getHeight();
-			boolean leftEquality = rightPoint.getX() == leftPoint.getX();
+			boolean heightEquality = (rightPoint.getHeight() == leftPoint.getHeight());
+			boolean leftEquality = (rightPoint.getX() == leftPoint.getX());
 
 			if (leftEquality && !heightEquality)
 				leftPoint.setHeight(Math.max(rightPoint.getHeight(), leftPoint.getHeight()));
 
-			if (leftEquality || heightEquality)
+			if (leftEquality || heightEquality) {
+				removedPoints.add(points.get(i));
 				points.remove(i);
+			}
 		}
+		
+		return removedPoints;
 	}
 	
 	private void printTrace(String message) {
-		if(showTrace) System.out.println(message);
+		if(showTrace) System.out.print(message);
 	}
 }
