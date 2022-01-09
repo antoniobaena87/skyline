@@ -26,7 +26,6 @@ public class Implementation {
 		
 		// Sort buildings in problem by ascending ordinates
 		BuildingSorter.sortBuildings(vectorBuildings);
-		vectorBuildings.toString();
 		
 		return buildings(vectorBuildings, "1");
 	}
