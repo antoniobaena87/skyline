@@ -24,7 +24,9 @@ public class Implementation {
 		
 		Building[] vectorBuildings = fileHandler.readData(entryDataPath); // cost N
 		
-		// TODO: Sort buildings in problem by ascending ordinates
+		// Sort buildings in problem by ascending ordinates
+		BuildingSorter.sortBuildings(vectorBuildings);
+		vectorBuildings.toString();
 		
 		return buildings(vectorBuildings, "1");
 	}
