@@ -2,6 +2,10 @@ package baena.skyline;
 
 public class BuildingSorter {
 	
+	private BuildingSorter() {
+		
+	}
+	
 	public static void sortBuildings(Building[] arrayToSort) {
 		
 		mergeSort(arrayToSort, 0, arrayToSort.length-1);	// time complexity of O(n logn)
@@ -9,7 +13,7 @@ public class BuildingSorter {
 	
 	private static void mergeSort(Building[] array, int l, int r) {
 		
-		if(l <= r) return;
+		if(r <= l) return;	// trivial case
 		
 		int mid = (l + r) / 2;
 		mergeSort(array, l, mid);

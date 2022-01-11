@@ -28,9 +28,10 @@ public class Main {
 			}
 		}
 		
+		implementation = new Implementation(showTrace, showHelp, entryDataPath);
+		
 		if(entryDataPath == null) throw new IllegalArgumentException("Error. No se ha especificado archivo de entrada");
 		
-		implementation = new Implementation(showTrace, showHelp, entryDataPath);
 		ListPoint skyline;
 		
 		try {

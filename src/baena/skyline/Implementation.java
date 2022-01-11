@@ -7,25 +7,23 @@ import java.util.Arrays;
 public class Implementation {
 	
 	private boolean showTrace;
-	private boolean showHelp;
 	private String entryDataPath;
 	private FileHandler fileHandler;
 	
 	public Implementation(boolean showTrace, boolean showHelp, String entryDataPath) {
 		this.showTrace = showTrace;
-		this.showHelp = showHelp;
 		this.entryDataPath = entryDataPath;
 		fileHandler = new FileHandler();
+		
+		if(showHelp) printHelp();
 	}
 	
 	public ListPoint beginExecution() throws IOException {
 		
-		if(showHelp) printHelp();
-		
 		Building[] vectorBuildings = fileHandler.readData(entryDataPath); // cost N
 		
 		// Sort buildings in problem by ascending ordinates
-		BuildingSorter.sortBuildings(vectorBuildings);
+		// BuildingSorter.sortBuildings(vectorBuildings);	// cost of O(n log n)
 		
 		return buildings(vectorBuildings, "1");
 	}
@@ -71,6 +69,7 @@ public class Implementation {
 		
 		printTrace("Dividiendo el vector de edificios en dos mitades...\n\n");
 		
+		// Two recursive calls, each dividing the array by half -> a = b = 2
 		ListPoint sl1 = buildings(Arrays.copyOfRange(buildingVector, 0, n/2), iterationNumber + "." + 1);
 		ListPoint sl2 = buildings(Arrays.copyOfRange(buildingVector, (n/2), n), iterationNumber + "." + 2);
 		
@@ -95,7 +94,7 @@ public class Implementation {
 	/**
 	 * Combines two skylines into one that serves as solution.
 	 * 
-	 * Cost is 2 * (sl1.size + sl2.size) = O(n+m)
+	 * Cost is 2 * (sl1.size + sl2.size) => O(n+m)
 	 * 
 	 * @param sl1
 	 * @param sl2
@@ -130,13 +129,13 @@ public class Implementation {
 		}
 		
 		if(sl1.isEmpty()) {
-			skyline.addAll(sl2);
+			skyline.addAll(sl2);	// cost m
 		} else if(sl2.isEmpty()) {
-			skyline.addAll(sl1);
+			skyline.addAll(sl1);	// cost n
 		}
 		
 		printTrace("Comenzando comprobación de puntos redundantes...");
-		ListPoint removedPoints = removeRedundant(skyline);				// cost is n + m, as in the while loop
+		ListPoint removedPoints = removeRedundant(skyline);				// cost is n + m
 		printTrace(" Puntos eliminados: " + removedPoints + "\n");
 		
 		printTrace("Skyline resultado de la combinación: " + skyline.toString() + "\n\n");
